@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "snowpack dev --open none"
+    "dev": "snowpack dev --open none",
+    "build": "snowpack build"
   },
   "dependencies": {
     "eaciest": "^0.4.0",
