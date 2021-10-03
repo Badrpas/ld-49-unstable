@@ -69,7 +69,7 @@ export const createBullet = (
 
   return {
     ...createSprite(url),
-    lifespan: 1,
+    lifespan: 2,
     speed: 10,
     shape: 'circle',
     rigid: true,

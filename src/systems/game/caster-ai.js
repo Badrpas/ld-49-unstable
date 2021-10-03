@@ -80,6 +80,8 @@ export class CasterAiSystem extends System {
   }
 
   getOtherAI (caster, retries = 2) {
+    if (this.entities.size === 1) return;
+
     let idx = rand_int(1, this.entities.size);
     while (idx) for (const other of this.entities) {
       if (caster === other || --idx) continue;
