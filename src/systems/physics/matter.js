@@ -1,6 +1,6 @@
 import Matter from 'matter-js';
 import { System } from 'eaciest';
-import { xor } from '../utils/selectors';
+import { xor } from '../../utils/selectors';
 
 const {
   Engine,
@@ -63,7 +63,6 @@ export class MatterSystem extends System {
     this.world = this.engine.world;
 
 
-
     Events.on(this.engine, 'collisionStart', this.onCollisionStart);
     Events.on(this.engine, 'collisionEnd', this.onCollisionEnd);
 
@@ -117,16 +116,18 @@ export class MatterSystem extends System {
   createBody (entity) {
     const { pos, shape, bodyOptions = {} } = entity;
     switch (shape) {
-      case 'circle':
-        return Bodies.circle(pos.x, pos.y, entity.radius ?? 0.5, {
+      case 'circle': {
+        const radius = entity.scale ? Math.max(entity.scale.x, entity.scale.y) / 2 : 0.5;
+        return Bodies.circle(pos.x, pos.y, radius, {
           isStatic: !!entity.static,
           ...bodyOptions,
         });
+      }
     }
   }
 
   onEntityAdded (entity, collectionName) {
-    // Skip if already added
+    // Skip if already linked
     if (getEntityBody(entity)) return;
 
     const body = this.createBody(entity);
@@ -136,7 +137,6 @@ export class MatterSystem extends System {
     entity[BodyLink] = body;
 
     Composite.add(this.world, body);
-    console.log('added new body');
   }
 
   removeEntity (entity, collectionName) {

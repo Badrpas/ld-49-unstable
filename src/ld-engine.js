@@ -1,5 +1,8 @@
 import { Engine, System } from 'eaciest';
+import { PerfMeasurer } from './utils/perf-measurer';
 
+
+const LastSystemCallUpdate = Symbol('Last system update');
 
 export class LDEngine extends Engine {
   persistentQuery (query) {
@@ -40,4 +43,24 @@ export class LDEngine extends Engine {
       system,
     };
   }
+
+  perf = new PerfMeasurer();
+
+  updateSystem (system) {
+    const key = system.constructor?.name || system;
+
+    if (system.interval) {
+      if (!system[LastSystemCallUpdate] || this.time - system[LastSystemCallUpdate] >= system.interval * 1000) {
+        system[LastSystemCallUpdate] = this.time;
+      } else {
+        this.perf.markPerf(key, 0);
+        return;
+      }
+    }
+
+    this.perf.start(key);
+    super.updateSystem(system);
+    this.perf.end(key);
+  }
+
 }

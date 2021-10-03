@@ -10,6 +10,7 @@ export class MoveSystem extends System {
 
   update (dt) {
     for (const entity of this.getEntities()) {
+      if (entity.rooted) continue;
       const speed = entity.speed ?? 1;
 
       Object.assign(t, entity.dir);

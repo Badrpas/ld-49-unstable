@@ -127,8 +127,6 @@ window.debug_values = new Proxy({}, {
   set (target, prop, value, receiver) {
     if (typeof value === 'number') {
       value = value.toFixed(2);
-    } else if (value instanceof Vector) {
-      value = value.toFixed(2);
     }
     set_val(prop, value);
     return true;

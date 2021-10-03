@@ -25,15 +25,16 @@ export class SceneObjectSystem extends System {
   buffered = [];
 
   onEntityAdded (entity) {
-    if (!this.root) {
+    if (!this.root && entity.parent) {
       this.buffered.push(entity);
     } else {
       const object3d = entity[SceneObject];
-      this.root.add(object3d);
-      if (entity.pos) {
-        Object.assign(object3d.position, entity.pos);
-      }
+      (entity.parent?.[SceneObject] || this.root).add(object3d);
+      if (entity.pos) Object.assign(object3d.position, entity.pos);
       entity.pos = object3d.position;
+
+      if (entity.scale) Object.assign(object3d.scale, entity.scale);
+      entity.scale = object3d.scale;
     }
   }
 
@@ -63,7 +64,5 @@ export class RootInitSystem extends System {
       }
     }
   }
-
-
 
 }

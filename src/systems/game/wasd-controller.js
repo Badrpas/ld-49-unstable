@@ -1,7 +1,9 @@
 import { System } from 'eaciest';
-import { Vector2 } from 'three';
-import { createSprite } from '../proto/sprite';
-import { InputComponent, MouseLeft } from './input';
+import { Vector3 } from 'three';
+import { invert_phase } from '../../game/unit-phase';
+import { cast_bullet } from '../../proto/bullet';
+import { InputComponent, MouseLeft, MouseRight } from '../core/input';
+import { DeathMark } from './death';
 
 export const WasdController = 'WasdController';
 
@@ -9,16 +11,16 @@ export class WasdControllerSystem extends System {
 
   constructor () {
     super({
-      pawns: [WasdController],
+      pawn: [WasdController],
       input: [InputComponent],
     });
   }
 
   update () {
-    const pawn = this.getEntity('pawns');
+    const pawn = this.getEntity('pawn');
     const input = this.getInput();
 
-    if (!(pawn && input)) return;
+    if (!(pawn && input) || pawn[DeathMark]) return;
 
     this.ensureDir(pawn);
     pawn.dir.x = pawn.dir.y = 0;
@@ -37,26 +39,23 @@ export class WasdControllerSystem extends System {
     }
 
     pawn.dir.normalize();
-    // console.log(pawn.dir);
-    
-    if (input.keysReleased.has(MouseLeft)) {
-      world.addEntity({
-        ...createSprite ('img/def.png'),
-        shape: 'circle',
-        rigid: true,
-        pos: input.cursorGlobal
-      });
-      console.log(input.cursor, input.cursorGlobal);
+
+    if (input.keysDown.has(MouseLeft)) {
+      cast_bullet(pawn, input.cursorGlobal);
     }
 
+    // if (input.keysJustPressed.has(MouseRight) && !pawn.rooted) {
+    //   pawn.phase = invert_phase(pawn.phase);
+    //   pawn.rooted = true;
+    //   setTimeout(() => pawn.rooted = false, 200);
+    // }
   }
 
   getInput () {
     return this.getEntity('input')?.[InputComponent];
   }
 
-
   ensureDir (entity) {
-    entity.dir = entity.dir || new Vector2();
+    entity.dir = entity.dir || new Vector3();
   }
 }

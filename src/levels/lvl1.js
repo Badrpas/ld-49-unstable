@@ -1,33 +1,42 @@
-import { createPlayer } from '../proto/player';
-import { createSprite } from '../proto/sprite';
-import { SceneObject } from '../systems/scene-object';
-import { WasdController } from '../systems/wasd-controller';
+import { init_stars } from '../game/stars';
+import { createCaster } from '../proto/caster';
+import { createPlayer, PlayerMark } from '../proto/player';
+import { DeathMark } from '../systems/game/death';
+import { WasdController } from '../systems/game/wasd-controller';
 
 
 /**
  * @param world {LDEngine}
  */
 export const createLvl1 = (world) => {
-  world.addEntity({
-    ...createSprite ('img/def.png'),
-    shape: 'circle',
-    rigid: true,
-  });
-  world.addEntity({
-    ...createSprite ('img/def.png'),
-    shape: 'circle',
-    rigid: true,
-    pos: { x: 0, y: 1 }
-  });
+  init_stars(world);
+
 
   const player = window.player = world.addEntity(createPlayer({
     pos: { x: 1, y: -1 },
     [WasdController]: true,
   }));
 
-  world.hook(['camera'])
-    .on('onEntityAdded', function (cameraEntity) {
-      player[SceneObject].add(cameraEntity.camera);
+  world.addEntity(createCaster({
+    pos: { x: Math.random() * 10 - 5, y: Math.random() * 10 - 5 },
+  }));
+  world.addEntity(createCaster({
+    pos: { x: Math.random() * 10 - 5, y: Math.random() * 10 - 5 },
+  }));
+  world.addEntity(createCaster({
+    pos: { x: Math.random() * 10 - 5, y: Math.random() * 10 - 5 },
+  }));
+  world.addEntity(createCaster({
+    pos: { x: Math.random() * 10 - 5, y: Math.random() * 10 - 5 },
+  }));
+  world.addEntity(createCaster({
+    pos: { x: Math.random() * 10 - 5, y: Math.random() * 10 - 5 },
+  }));
+
+
+  world.hook([PlayerMark, DeathMark])
+    .on('onEntityAdded', function (entity) {
+
     })
     .execute();
 
